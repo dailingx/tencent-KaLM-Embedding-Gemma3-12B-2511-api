@@ -1,0 +1,1 @@
+# tencent-KaLM-Embedding-Gemma3-12B-2511-api
