@@ -2,7 +2,7 @@ from sentence_transformers import SentenceTransformer
 import torch
 
 model = SentenceTransformer(
-    "tencent/KaLM-Embedding-Gemma3-12B-2511",
+    "KaLM-Embedding-Gemma3-12B-2511",
     trust_remote_code=True,
     model_kwargs={
         "torch_dtype": torch.bfloat16,
