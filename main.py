@@ -2,8 +2,9 @@ from sentence_transformers import SentenceTransformer
 import torch
 
 model = SentenceTransformer(
-    "KaLM-Embedding-Gemma3-12B-2511",
+    "./KaLM-Embedding-Gemma3-12B-2511",
     trust_remote_code=True,
+    local_files_only=True,
     model_kwargs={
         "torch_dtype": torch.bfloat16,
         "attn_implementation": "flash_attention_2",  # Optional
