@@ -3,29 +3,17 @@ import torch
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
+from contextlib import asynccontextmanager
 import uvicorn
-
-# 初始化 FastAPI 应用
-app = FastAPI()
 
 # 全局模型变量
 model = None
 
 
-class EmbeddingRequest(BaseModel):
-    sentences: List[str]
-    prompt: str
-
-
-class EmbeddingResponse(BaseModel):
-    code: int
-    message: str
-    data: dict
-
-
-@app.on_event("startup")
-async def load_model():
-    """应用启动时加载模型"""
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """应用生命周期管理：启动时加载模型，关闭时清理资源"""
+    # 启动时加载模型
     global model
     model = SentenceTransformer(
         "./KaLM-Embedding-Gemma3-12B-2511",
@@ -37,6 +25,23 @@ async def load_model():
         },
     )
     model.max_seq_length = 512
+    yield
+    # 关闭时可以在这里添加清理逻辑（如果需要）
+
+
+# 初始化 FastAPI 应用
+app = FastAPI(lifespan=lifespan)
+
+
+class EmbeddingRequest(BaseModel):
+    sentences: List[str]
+    prompt: str
+
+
+class EmbeddingResponse(BaseModel):
+    code: int
+    message: str
+    data: dict
 
 
 @app.post("/embedding", response_model=EmbeddingResponse)
